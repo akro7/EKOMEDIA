@@ -77,7 +77,6 @@ class DownloadService : Service() {
             task.status = DownloadStatus.DOWNLOADING
             notify("⬇ جاري التحضير: $title", 0)
 
-            // ── Re-fetch fresh stream URL (YouTube signed URLs expire fast) ──
             val directUrl = withContext(Dispatchers.IO) {
                 runCatching { resolveFreshUrl(pageUrl, audioOnly, targetHeight) }.getOrNull()
             }
@@ -124,23 +123,19 @@ class DownloadService : Service() {
     /**
      * Re-extracts a FRESH direct stream URL from the page URL.
      *
-     * FIXES applied (mirroring NewPipe's DownloadMissionRecover.resolveStream):
-     *
      * FIX 1 — NewPipe init guard:
-     *   The Service may run in a separate OS process after the app is killed.
-     *   EkoMediaApp.onCreate() is not guaranteed to run before onStartCommand().
-     *   We call ensureNewPipeInit() before any extractor call.
+     *   The Service may start in a fresh OS process where EkoMediaApp.onCreate()
+     *   has not yet run. We use the EkoMediaApp.newPipeInitialized flag to detect
+     *   this and re-initialise before calling any extractor code.
      *
-     * FIX 2 — DeliveryMethod filter:
-     *   YouTube returns both PROGRESSIVE_HTTP and DASH streams in videoStreams /
-     *   videoOnlyStreams. Passing a DASH manifest URL to DownloadEngine (which
-     *   uses a plain HttpURLConnection) downloads the XML manifest, not the
-     *   actual video. We now filter to PROGRESSIVE_HTTP only, exactly as
-     *   NewPipe's DownloadMissionRecover.resolveStream() does.
+     * FIX 2 — DeliveryMethod.PROGRESSIVE_HTTP filter:
+     *   YouTube returns both PROGRESSIVE_HTTP (direct file URL) and DASH (XML
+     *   manifest URL) entries. Passing a DASH URL to DownloadEngine downloads
+     *   an XML manifest instead of actual media. We filter to PROGRESSIVE_HTTP
+     *   only — same as NewPipe's DownloadMissionRecover.resolveStream().
      *
      * FIX 3 — null content guard:
-     *   stream.content can be null for streams whose URL couldn't be resolved.
-     *   Added explicit null/blank checks before returning.
+     *   stream.content can be null; all filter chains now check isNullOrBlank().
      */
     private fun resolveFreshUrl(pageUrl: String, audioOnly: Boolean, targetHeight: Int): String? {
         ensureNewPipeInit()
@@ -156,7 +151,7 @@ class DownloadService : Service() {
                     .firstOrNull()?.content
             }
             else -> {
-                // 1. Muxed video+audio (videoStreams), PROGRESSIVE_HTTP only
+                // 1. Muxed video+audio, PROGRESSIVE_HTTP only
                 val muxed = info.videoStreams
                     .filter { it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP }
                     .filter { !it.content.isNullOrBlank() }
@@ -169,7 +164,7 @@ class DownloadService : Service() {
                     }
                 if (muxed != null) return muxed.content
 
-                // 2. Video-only streams (PROGRESSIVE_HTTP) — no audio track
+                // 2. Video-only streams, PROGRESSIVE_HTTP only
                 val videoOnly = info.videoOnlyStreams
                     .filter { it.deliveryMethod == DeliveryMethod.PROGRESSIVE_HTTP }
                     .filter { !it.content.isNullOrBlank() }
@@ -189,20 +184,15 @@ class DownloadService : Service() {
     }
 
     /**
-     * FIX 1 (detail): Ensures NewPipe is initialised in this process.
-     * Uses EkoDownloader singleton — same downloader the Application used.
-     * If the singleton is gone (process was killed), re-creates it.
+     * FIX 1 (detail): Uses EkoMediaApp.newPipeInitialized — a simple @Volatile
+     * boolean set in Application.onCreate(). No reflection, no wrong API calls.
+     * If the process was killed and restarted without Application.onCreate(),
+     * we re-init using EkoDownloader singleton (or create a fresh one if gone).
      */
     private fun ensureNewPipeInit() {
-        try {
-            // If this throws, NewPipe is not initialised in this process
-            NewPipe.getStaticServiceByUrl("https://www.youtube.com/watch?v=test")
-        } catch (_: Exception) {
-            val downloader = try {
-                EkoDownloader.getInstance()
-            } catch (_: Exception) {
-                EkoDownloader.init(OkHttpClient.Builder())
-            }
+        if (!EkoMediaApp.newPipeInitialized) {
+            val downloader = runCatching { EkoDownloader.getInstance() }
+                .getOrElse { EkoDownloader.init(OkHttpClient.Builder()) }
             NewPipe.init(downloader, Localization.DEFAULT, ContentCountry.DEFAULT)
         }
     }
