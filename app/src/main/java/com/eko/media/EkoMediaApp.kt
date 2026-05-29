@@ -19,13 +19,10 @@ class EkoMediaApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // ✅ FIXED: Initialize NewPipe with Localization + ContentCountry
-        // (required since extractor v0.22+, fixes "page needs to be reloaded" error)
-        NewPipe.init(
-            EkoDownloader.init(OkHttpClient.Builder()),
-            Localization.DEFAULT,
-            ContentCountry.DEFAULT
-        )
+        // Initialize NewPipe with Localization + ContentCountry
+        val downloader = EkoDownloader.init(OkHttpClient.Builder())
+        NewPipe.init(downloader, Localization.DEFAULT, ContentCountry.DEFAULT)
+        newPipeInitialized = true
 
         createNotificationChannels()
     }
@@ -46,12 +43,21 @@ class EkoMediaApp : Application() {
 
     companion object {
         const val CHANNEL_DOWNLOAD = "eko_download_channel"
+
+        /**
+         * True once NewPipe.init() has been called in this process.
+         * DownloadService checks this flag before calling extractor methods,
+         * because the Service may start in a fresh process where onCreate()
+         * has not yet run.
+         */
+        @Volatile
+        var newPipeInitialized: Boolean = false
+            private set
     }
 }
 
 /**
  * HTTP Downloader for NewPipe Extractor
- * ✅ FIXED: Now uses same pattern as NewPipe's official DownloaderImpl.java
  */
 class EkoDownloader private constructor(builder: OkHttpClient.Builder) : Downloader() {
 
@@ -64,7 +70,6 @@ class EkoDownloader private constructor(builder: OkHttpClient.Builder) : Downloa
             val req = chain.request().newBuilder()
                 .header(
                     "User-Agent",
-                    // ✅ FIXED: Updated UA to match NewPipe's current DownloaderImpl
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0"
                 )
                 .build()
@@ -80,7 +85,6 @@ class EkoDownloader private constructor(builder: OkHttpClient.Builder) : Downloa
 
         var requestBuilder = okhttp3.Request.Builder().url(url)
 
-        // Add all headers from extractor request
         headers.forEach { (key, values) ->
             values.forEach { value -> requestBuilder = requestBuilder.addHeader(key, value) }
         }
@@ -88,8 +92,7 @@ class EkoDownloader private constructor(builder: OkHttpClient.Builder) : Downloa
         val httpRequest = when (httpMethod) {
             "GET"  -> requestBuilder.get().build()
             "POST" -> {
-                val bodyContent = body?.toRequestBody()
-                    ?: "".toRequestBody()
+                val bodyContent = body?.toRequestBody() ?: "".toRequestBody()
                 requestBuilder.post(bodyContent).build()
             }
             "HEAD" -> requestBuilder.head().build()
