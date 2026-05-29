@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splash_bg_gradient">
+
+    <!-- Guideline at 38% for logo center -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.38" />
+
+    <!-- Outer big glow -->
+    <View
+        android:id="@+id/glowOuter"
+        android:layout_width="380dp"
+        android:layout_height="380dp"
+        android:background="@drawable/glow_circle"
+        android:alpha="0.15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideCenter"
+        app:layout_constraintBottom_toBottomOf="@id/guideCenter" />
+
+    <!-- Inner glow ring -->
+    <View
+        android:id="@+id/glowInner"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:background="@drawable/red_glow_ring"
+        android:alpha="0.45"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideCenter"
+        app:layout_constraintBottom_toBottomOf="@id/guideCenter" />
+
+    <!-- Logo background circle -->
+    <View
+        android:id="@+id/logoBgCircle"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@drawable/logo_bg_circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideCenter"
+        app:layout_constraintBottom_toBottomOf="@id/guideCenter" />
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/ic_eko_logo"
+        android:contentDescription="EKO Logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideCenter"
+        app:layout_constraintBottom_toBottomOf="@id/guideCenter" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="  🏵️  EKO🌟MEDIA 🏵️ "
+        android:textColor="@color/eko_text"
+        android:textSize="25sp"
+        android:letterSpacing="0.25"
+        android:fontFamily="sans-serif-black"
+        android:layout_marginTop="28dp"
+        app:layout_constraintTop_toBottomOf="@id/ivLogo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Red accent line -->
+    <View
+        android:id="@+id/accentLine"
+        android:layout_width="80dp"
+        android:layout_height="3dp"
+        android:background="@color/eko_accent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="by A_KOJO • 👻♥️"
+        android:textColor="@color/eko_accent"
+        android:textSize="13sp"
+        android:letterSpacing="0.12"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/accentLine"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Version -->
+    <TextView
+        android:id="@+id/tvVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="v3.0 by A_KOJO"
+        android:textColor="@color/eko_text_dim"
+        android:textSize="11sp"
+        android:layout_marginBottom="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Bottom red bar -->
+    <View
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        android:background="@color/eko_accent"
+        android:alpha="0.6"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

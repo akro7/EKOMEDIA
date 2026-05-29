@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <!-- Outer ring -->
+    <path
+        android:strokeColor="#00C8FF"
+        android:strokeWidth="3"
+        android:fillColor="#00000000"
+        android:pathData="M48,8 A40,40 0 1,1 47.99,8 Z" />
+    <!-- E letter stylized -->
+    <path
+        android:fillColor="#00C8FF"
+        android:pathData="M30,32 L66,32 L66,40 L38,40 L38,44 L62,44 L62,52 L38,52 L38,56 L66,56 L66,64 L30,64 Z" />
+</vector>

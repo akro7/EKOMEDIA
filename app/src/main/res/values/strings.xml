@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EKO MEDIA</string>
+    <string name="hint_url">الصق رابط الفيديو هنا (YouTube, TikTok, Twitter…)</string>
+    <string name="btn_fetch">🔍 بحث</string>
+    <string name="btn_download">⬇ تحميل</string>
+    <string name="btn_play">▶ تشغيل</string>
+    <string name="loading">جاري استخراج معلومات الفيديو…</string>
+    <string name="no_downloads">لا توجد تحميلات بعد</string>
+</resources>

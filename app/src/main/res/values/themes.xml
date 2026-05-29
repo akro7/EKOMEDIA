@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.EkoMedia" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/eko_accent</item>
+        <item name="colorPrimaryVariant">@color/eko_accent_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/eko_accent2</item>
+        <item name="colorSurface">@color/eko_surface</item>
+        <item name="android:colorBackground">@color/eko_bg</item>
+        <item name="android:windowBackground">@color/eko_bg</item>
+        <item name="android:statusBarColor">@color/eko_bg</item>
+        <item name="android:navigationBarColor">@color/eko_bg</item>
+        <item name="android:textColorPrimary">@color/eko_text</item>
+        <item name="android:textColorSecondary">@color/eko_text_dim</item>
+    </style>
+
+    <style name="Theme.EkoMedia.Splash" parent="Theme.EkoMedia">
+        <item name="android:windowBackground">@color/eko_bg</item>
+    </style>
+
+    <style name="Theme.EkoMedia.Player" parent="Theme.EkoMedia">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+
+    <!-- Quality picker dialog -->
+    <style name="EkoDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:background">@color/eko_surface2</item>
+        <item name="android:textColor">@color/eko_text</item>
+        <item name="colorPrimary">@color/eko_accent</item>
+    </style>
+
+</resources>
